@@ -43,3 +43,10 @@ yarn-error.log*
 
 # OS metadata
 .DS_Store
+
+# Render builds and local SQLite state
+/render-dist/
+/data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

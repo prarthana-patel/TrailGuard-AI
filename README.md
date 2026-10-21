@@ -1,5 +1,7 @@
 # TrailGuard AI — working coordination prototype
 
+**Hosting on Render?** Follow [RENDER_DEPLOY.md](RENDER_DEPLOY.md) or use the included `render.yaml` Blueprint. The Render entry point is `render/server.mjs`, built with `build:render`.
+
 A hackathon demonstration with real offline queueing, persistent server storage, route computation, allocation validation, disruption controls, human review and inspectable activity events. All locations, incidents, teams and travel times are simulated. This is not an emergency service.
 
 ## Current mode
@@ -10,7 +12,7 @@ The deployed app runs the **Rule-based demo planner**. No LLM credential has bee
 
 ## Implemented stack
 
-React + Vinext on Cloudflare Workers, TypeScript routing and planner, D1 durable storage, IndexedDB device queue. This differs from the proposal's planned Python FastAPI + NetworkX stack. No Python server is hosted by this project.
+The original Site uses React + Vinext on Cloudflare Workers with D1. The Render target uses a Vite-built React client, Node server and local SQLite, with signed per-visitor demo sessions. Both share the TypeScript planner and IndexedDB queue. Render Free storage is ephemeral; see the deployment guide. This differs from the proposal's planned Python FastAPI + NetworkX stack. No Python server is hosted by this project.
 
 ## Walkthrough
 

@@ -7,7 +7,7 @@ const report=z.object({id:z.string().min(1).max(100),title:z.string().min(3).max
 function cfg(){return env as unknown as AIConfig;}
 function owner(req:Request){return req.headers.get('oai-authenticated-user-id')||'private-owner-demo';}
 async function read(req:Request){if(!env.DB)throw new Error('Storage not configured');const key=owner(req);await env.DB.prepare('INSERT OR IGNORE INTO workspaces(owner,version,data) VALUES(?,0,?)').bind(key,JSON.stringify(seed())).run();const row=await env.DB.prepare('SELECT version,data FROM workspaces WHERE owner=?').bind(key).first<{version:number;data:string}>();if(!row)throw new Error('Storage read failed');return {key,s:{...JSON.parse(row.data),version:row.version} as State};}
-function response(s:State,status=200){return Response.json({state:s,aiConnected:!!(cfg().OPENAI_API_KEY&&cfg().OPENAI_MODEL)},{status,headers:{'Cache-Control':'no-store'}});}
+function response(s:State,status=200){return Response.json({state:s,deploymentMode:(env as any).TRAILGUARD_HOST||'sites',aiConnected:!!(cfg().OPENAI_API_KEY&&cfg().OPENAI_MODEL)},{status,headers:{'Cache-Control':'no-store'}});}
 export async function GET(req:Request){try{const {s}=await read(req);return response(s);}catch{return Response.json({error:'Could not load server storage. Please retry.'},{status:503});}}
 export async function POST(req:Request){try{
  const origin=req.headers.get('origin');if(origin&&origin!==new URL(req.url).origin)return Response.json({error:'Origin not allowed'},{status:403});

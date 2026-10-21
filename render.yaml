@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: trailguard-ai
+    runtime: node
+    plan: free
+    buildCommand: corepack pnpm install --frozen-lockfile && corepack pnpm run build:render
+    startCommand: node render/server.mjs
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 24.19.0
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: TRAILGUARD_DB_PATH
+        value: /tmp/trailguard.sqlite
