@@ -1,0 +1,5 @@
+import type {Incident} from './engine';
+const open=()=>new Promise<IDBDatabase>((resolve,reject)=>{const r=indexedDB.open('trailguard-offline',1);r.onupgradeneeded=()=>r.result.createObjectStore('reports',{keyPath:'id'});r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
+export async function pending():Promise<Incident[]>{const db=await open();return new Promise((ok,no)=>{const tx=db.transaction('reports','readonly');const r=tx.objectStore('reports').getAll();r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error);tx.oncomplete=()=>db.close();});}
+export async function queue(i:Incident){const db=await open();return new Promise<void>((ok,no)=>{const tx=db.transaction('reports','readwrite');tx.objectStore('reports').put(i);tx.oncomplete=()=>{db.close();ok();};tx.onerror=()=>no(tx.error);tx.onabort=()=>no(tx.error);});}
+export async function removeQueued(id:string){const db=await open();return new Promise<void>((ok,no)=>{const tx=db.transaction('reports','readwrite');tx.objectStore('reports').delete(id);tx.oncomplete=()=>{db.close();ok();};tx.onerror=()=>no(tx.error);});}
